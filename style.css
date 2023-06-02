@@ -434,7 +434,7 @@ html {
 /*  FORM  */
 .form {
   grid-column: 3/4;
-  grid-row: 3/4;
+  grid-row: 2/3;
 }
 .form__input {
   width: 20.4rem;
@@ -459,7 +459,7 @@ html {
 /*  SEARCH  */
 .search {
   grid-column: 3/4;
-  grid-row: 2/3;
+  grid-row: 3/3;
   position: relative;
   display: flex;
   align-items: center;

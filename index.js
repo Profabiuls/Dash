@@ -142,3 +142,8 @@ cursore.addEventListener('mouseup', function() {
   x.volume = valore/100;
 });
 
+const button = document.getElementById("icon-home");
+
+button.addEventListener("click", () => {
+  window.location.href = "https://www.google.com"; // Sostituisci con l'URL desiderato
+});
