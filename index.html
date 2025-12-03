@@ -1,76 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 
 <head>
-  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet">
-
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-  <script src="https://kit.fontawesome.com/f0601b0fb2.js" crossorigin="anonymous"></script>
-  <script type='module' src='https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js'></script>
-  <script nomodule='' src='https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js'></script>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Dashboard interattiva con design Neumorphic moderno - Include orologio, player audio, e componenti UI interattivi">
+  <meta name="keywords" content="dashboard, neumorphic, design, UI components, audio player">
+  <meta name="author" content="Fabio Murtas">
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Neumorphic Dashboard">
+  <meta property="og:description" content="Dashboard interattiva con design Neumorphic moderno">
+  <meta property="og:type" content="website">
+  
+  <title>Neumorphic Dashboard | UI Components Interattivi</title>
+  
+  <!-- Preconnect for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Stylesheets -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
-  <title>Document</title>
+  
+  <!-- External Scripts -->
+  <script src="https://kit.fontawesome.com/f0601b0fb2.js" crossorigin="anonymous"></script>
+  <script type='module' src='https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js'></script>
+  <script nomodule='' src='https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js'></script>
 </head>
 
 <body>
-  <audio id="myAudio">
+  <audio id="myAudio" aria-label="Audio player">
     <source src="04 - Boss Theme 3.mp3" type="audio/mpeg">
+    Il tuo browser non supporta l'elemento audio.
   </audio>
 
-  <div class="container">
-    <div class="components">
+  <main class="container" role="main">
+    <section class="components" aria-label="Componenti UI interattivi">
 
-      <div class="switch">
+      <div class="switch" role="group" aria-label="Switch controls">
         <div class="switch__1">
-          <input id="switch-1" type="checkbox">
+          <input id="switch-1" type="checkbox" aria-label="Switch 1">
           <label for="switch-1"></label>
         </div>
 
         <div class="switch__2">
-          <input id="switch-2" type="checkbox" checked>
+          <input id="switch-2" type="checkbox" checked aria-label="Switch 2">
           <label for="switch-2"></label>
         </div>
       </div>
 
-      <div class="checkbox">
+      <div class="checkbox" role="group" aria-label="Checkbox controls">
         <div class="checkbox__1">
-          <input id="checkbox-1" type="checkbox">
+          <input id="checkbox-1" type="checkbox" aria-label="Checkbox 1">
           <label for="checkbox-1">
-            <i class="material-icons">done</i></label>
+            <i class="material-icons" aria-hidden="true">done</i></label>
         </div>
         <div class="checkbox__2">
-          <input id="checkbox-2" type="checkbox" checked>
+          <input id="checkbox-2" type="checkbox" checked aria-label="Checkbox 2">
           <label for="checkbox-2">
-            <i class="material-icons">done</i></label>
+            <i class="material-icons" aria-hidden="true">done</i></label>
         </div>
       </div>
 
-      <div class="radio">
+      <div class="radio" role="radiogroup" aria-label="Radio controls">
         <div class="radio__1">
-          <input id="radio-1" type="radio" name="radio" value="1">
+          <input id="radio-1" type="radio" name="radio" value="1" aria-label="Opzione 1">
           <label for="radio-1"></label>
         </div>
 
         <div class="radio__2">
-          <input id="radio-2" type="radio" name="radio" value="2" checked>
+          <input id="radio-2" type="radio" name="radio" value="2" checked aria-label="Opzione 2">
           <label for="radio-2"></label>
         </div>
       </div>
 
-      <div class="btn btn__primary">
+      <button class="btn btn__primary" aria-label="Primary action button">
         <p>Button</p>
-      </div>
-      <div class="btn btn__secondary">
+      </button>
+      <button class="btn btn__secondary" aria-label="Secondary action button">
         <p>Button</p>
-      </div>
+      </button>
 
-      <div class="clock">
+      <div class="clock" role="img" aria-label="Orologio analogico">
         <div class="hand hours"></div>
         <div class="hand minutes"></div>
         <div class="hand seconds"></div>
@@ -83,80 +99,80 @@
         </div>
       </div>
 
-      <div class="chip">
-        <div class="chip__icon">
+      <div class="chip" role="status" aria-label="Chip informativo">
+        <div class="chip__icon" aria-hidden="true">
           <ion-icon name="color-palette"></ion-icon>
         </div>
         <p>Neumorphic Design</p>
-        <div class="chip__close">
+        <button class="chip__close" aria-label="Chiudi chip">
           <ion-icon name="close"></ion-icon>
-        </div>
+        </button>
       </div>
 
-      <div class="circle">
-        <span class="circle__btn">
-          <ion-icon class="play" name="play"></ion-icon>
-          <ion-icon class="pause" name="pause"></ion-icon>
-        </span>
+      <div class="circle" role="region" aria-label="Audio player controls">
+        <button class="circle__btn" aria-label="Play/Pause audio" aria-pressed="false">
+          <ion-icon class="play" name="play" aria-hidden="true"></ion-icon>
+          <ion-icon class="pause" name="pause" aria-hidden="true"></ion-icon>
+        </button>
         <span class="circle__back-1"></span>
         <span class="circle__back-2"></span>
       </div>
 
       <div class="form">
-        <input type="text" class="form__input" placeholder="Type anything...">
+        <input type="text" class="form__input" placeholder="Scrivi qualcosa..." aria-label="Input di testo">
       </div>
 
-      <form class="search" action="https://www.google.com/search" method="get" target="_blank">
+      <form class="search" action="https://www.google.com/search" method="get" target="_blank" role="search">
         <div class="search">
-          <input type="text" name="q" class="search__input" placeholder="Search...">
-          <div class="search__icon">
+          <input type="text" name="q" class="search__input" placeholder="Cerca..." aria-label="Campo di ricerca">
+          <div class="search__icon" aria-hidden="true">
             <ion-icon name="search"></ion-icon>
           </div>
         </div>
       </form>
 
-      <div class="segmented-control">
+      <div class="segmented-control" role="tablist" aria-label="Segmented control tabs">
 
-        <input type="radio" name="radio2" value="3" id="tab-1" checked />
-        <label for="tab-1" class="segmented-control__1">
+        <input type="radio" name="radio2" value="3" id="tab-1" checked aria-label="Tab 1" />
+        <label for="tab-1" class="segmented-control__1" role="tab" aria-selected="true">
           <p>Tab 1</p>
         </label>
 
-        <input type="radio" name="radio2" value="4" id="tab-2" />
-        <label for="tab-2" class="segmented-control__2">
+        <input type="radio" name="radio2" value="4" id="tab-2" aria-label="Tab 2" />
+        <label for="tab-2" class="segmented-control__2" role="tab" aria-selected="false">
           <p>Tab 2</p>
         </label>
 
-        <input type="radio" name="radio2" value="5" id="tab-3" />
-        <label for="tab-3" class="segmented-control__3">
+        <input type="radio" name="radio2" value="5" id="tab-3" aria-label="Tab 3" />
+        <label for="tab-3" class="segmented-control__3" role="tab" aria-selected="false">
           <p>Tab 3</p>
         </label>
 
         <div class="segmented-control__color"></div>
       </div>
 
-      <div class="icon">
-        <div class="icon__home">
-          <ion-icon name="home"></ion-icon>
-        </div>
-        <div class="icon__account">
-          <ion-icon name="person"></ion-icon>
-        </div>
-        <div class="icon__settings">
-          <ion-icon name="settings"></ion-icon>
-        </div>
-      </div>
+      <nav class="icon" role="navigation" aria-label="Icone di navigazione">
+        <button class="icon__home" aria-label="Home">
+          <ion-icon name="home" aria-hidden="true"></ion-icon>
+        </button>
+        <button class="icon__account" aria-label="Account">
+          <ion-icon name="person" aria-hidden="true"></ion-icon>
+        </button>
+        <button class="icon__settings" aria-label="Impostazioni">
+          <ion-icon name="settings" aria-hidden="true"></ion-icon>
+        </button>
+      </nav>
 
-      <div class="slider" id="find0">
-        <div class="slider__box">
+      <div class="slider" id="find0" role="region" aria-label="Controllo volume">
+        <div class="slider__box" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-label="Slider volume" tabindex="0">
           <span class="slider__btn" id="find"></span>
           <span class="slider__color" id="find1"></span>
-          <span class="slider__tooltip" id="find2">50%</span>
+          <span class="slider__tooltip" id="find2" role="tooltip">50%</span>
         </div>
       </div>
-    </div>
+    </section>
   
-  </div>
+  </main>
   <script type="module" src="index.js"></script>
 </body>
 

@@ -21,6 +21,15 @@
     box-sizing: inherit;
   }
   
+  // Button reset
+  button {
+    border: none;
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+  }
+  
   html {
     box-sizing: border-box;
     font-size: 62.5%; // 1rem = 10px    100% = 16px
@@ -368,9 +377,16 @@
       height: 1.6rem;
       margin: 0 .5rem;
       display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 1.6rem;
       color: var(--greyLight-3);
       cursor: pointer;
+      transition: color .3s ease;
+      
+      &:hover {
+        color: var(--greyDark);
+      }
     }
   }
   
@@ -408,17 +424,18 @@
   
       .play {
         position: absolute;
-        opacity: 0;
+        opacity: 1;
         transition: all .2s linear;
         &.visibility {
-          opacity: 1;
+          opacity: 0;
         }
       }
       .pause {
         position: absolute;
+        opacity: 0;
         transition: all .2s linear;
         &.visibility {
-          opacity: 0;
+          opacity: 1;
         }
       }
     }

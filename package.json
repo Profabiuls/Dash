@@ -1,11 +1,30 @@
 {
-  "name": "dashboard",
-  "version": "1.0.0",
-  "description": "Prova dash ",
+  "name": "neumorphic-dashboard",
+  "version": "2.0.0",
+  "description": "Dashboard interattiva con design Neumorphic moderno - Include orologio analogico, player audio, e componenti UI interattivi",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "python3 -m http.server 8080",
+    "sass:watch": "sass --watch style.scss:style.css",
+    "sass:build": "sass style.scss:style.css --style=compressed",
+    "serve": "python3 -m http.server 8080"
   },
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "dashboard",
+    "neumorphic",
+    "design",
+    "ui",
+    "components",
+    "audio-player",
+    "interactive"
+  ],
+  "author": "Fabio Murtas",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/profabiuls/dash.git"
+  },
+  "devDependencies": {
+    "sass": "^1.69.5"
+  }
 }

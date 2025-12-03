@@ -1,144 +1,209 @@
-/*  clock */
+// ===== CLOCK FUNCTIONALITY =====
 const hours = document.querySelector('.hours');
 const minutes = document.querySelector('.minutes');
 const seconds = document.querySelector('.seconds');
 
-/*  play button */
+// ===== PLAY BUTTON =====
 const play = document.querySelector('.play');
 const pause = document.querySelector('.pause');
 const playBtn = document.querySelector('.circle__btn');
 const wave1 = document.querySelector('.circle__back-1');
 const wave2 = document.querySelector('.circle__back-2');
+const audio = document.getElementById('myAudio');
 
-/*  rate slider */
+// ===== RATE SLIDER =====
 const container = document.querySelector('.slider__box');
 const btn = document.querySelector('.slider__btn');
 const color = document.querySelector('.slider__color');
 const tooltip = document.querySelector('.slider__tooltip');
-let clock;
-let rotation;
-clock = () => {
-  let today = new Date();
-  let h = (today.getHours() % 12) + today.getMinutes() / 59; // 22 % 12 = 10pm
-  let m = today.getMinutes(); // 0 - 59
-  let s = today.getSeconds(); // 0 - 59
 
-  h *= 30; // 12 * 30 = 360deg
-  m *= 6;
-  s *= 6; // 60 * 6 = 360deg
+// Clock update function
+const updateClock = () => {
+  const today = new Date();
+  let h = (today.getHours() % 12) + today.getMinutes() / 59;
+  let m = today.getMinutes();
+  let s = today.getSeconds();
 
-  rotation(hours, h);
-  rotation(minutes, m);
-  rotation(seconds, s);
+  // Convert to degrees
+  h *= 30; // 12 hours * 30 = 360deg
+  m *= 6;  // 60 minutes * 6 = 360deg
+  s *= 6;  // 60 seconds * 6 = 360deg
 
-  // call every second
-  setTimeout(clock, 500);
-}
+  rotateHand(hours, h);
+  rotateHand(minutes, m);
+  rotateHand(seconds, s);
+};
 
-rotation = (target, val) => {
-  target.style.transform = `rotate(${val}deg)`;
-}
+// Rotate clock hand
+const rotateHand = (target, degrees) => {
+  target.style.transform = `rotate(${degrees}deg)`;
+};
 
-window.onload = clock();
-let dragElement;
-dragElement = (target, btn) => {
+// ===== INITIALIZATION ON PAGE LOAD =====
+window.addEventListener('DOMContentLoaded', () => {
+  // Initialize clock
+  updateClock();
+  setInterval(updateClock, 1000);
+  
+  // Set initial audio player state (CSS già gestisce lo stato iniziale corretto)
+  // play è già visibile (opacity: 1), pause già invisibile (opacity: 0)
+  wave1.classList.add('paused'); // Waves paused initially
+  wave2.classList.add('paused');
+  
+  // Set initial volume to 50% and verify audio element
+  if (audio) {
+    audio.volume = 0.5;
+    console.log('🎵 Audio element trovato:', audio);
+    console.log('📁 Sorgente audio:', audio.src);
+    console.log('🔊 Volume iniziale:', audio.volume);
+    
+    // Debug events
+    audio.addEventListener('loadeddata', () => {
+      console.log('✅ Audio caricato e pronto');
+    });
+    
+    audio.addEventListener('error', (e) => {
+      console.error('❌ Errore caricamento audio:', e);
+      console.error('Dettagli errore:', audio.error);
+    });
+  } else {
+    console.error('❌ Elemento audio NON trovato!');
+  }
+  
+  // Initialize slider position at 50%
+  const sliderRect = container.getBoundingClientRect();
+  const initialPosition = (sliderRect.width * 0.5) - 10;
+  btn.style.left = `${initialPosition}px`;
+  btn.x = initialPosition;
+  color.style.width = '50%';
+});
+// ===== DRAG SLIDER FUNCTIONALITY =====
+const dragElement = (target, sliderBtn) => {
+  const onMouseMove = (e) => {
+    e.preventDefault();
+    const targetRect = target.getBoundingClientRect();
+    let x = e.pageX - targetRect.left + 10;
+    
+    // Clamp x value
+    x = Math.max(0, Math.min(x, targetRect.width));
+    
+    sliderBtn.x = x - 10;
+    sliderBtn.style.left = `${sliderBtn.x}px`;
+
+    // Calculate position percentage
+    const percentPosition = ((sliderBtn.x + 10) / targetRect.width) * 100;
+
+    // Update color bar width
+    color.style.width = `${percentPosition}%`;
+
+    // Update tooltip position and show it
+    tooltip.style.left = `${sliderBtn.x - 5}px`;
+    tooltip.style.opacity = '1';
+    tooltip.textContent = `${Math.round(percentPosition)}%`;
+    
+    // Update audio volume
+    if (audio) {
+      audio.volume = percentPosition / 100;
+    }
+  };
+  
+  const onMouseUp = () => {
+    window.removeEventListener('mousemove', onMouseMove);
+    tooltip.style.opacity = '0';
+
+    sliderBtn.addEventListener('mouseover', () => {
+      tooltip.style.opacity = '1';
+    });
+
+    sliderBtn.addEventListener('mouseout', () => {
+      tooltip.style.opacity = '0';
+    });
+  };
+  
   target.addEventListener('mousedown', (e) => {
     onMouseMove(e);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
   });
-  let onMouseMove;
-  onMouseMove = (e) => {
-    e.preventDefault();
-    let targetRect = target.getBoundingClientRect();
-    let x = e.pageX - targetRect.left + 10;
-    if (x > targetRect.width) {
-      x = targetRect.width
-    };
-    if (x < 0) {
-      x = 0
-    };
-    btn.x = x - 10;
-    btn.style.left = btn.x + 'px';
-
-    // get the position of the button inside the container (%)
-    let percentPosition = (btn.x + 10) / targetRect.width * 100;
-
-    // color width = position of button (%)
-    color.style.width = percentPosition + "%";
-
-    // move the tooltip when button moves, and show the tooltip
-    tooltip.style.left = btn.x - 5 + 'px';
-    tooltip.style.opacity = 1;
-
-    // show the percentage in the tooltip
-    tooltip.textContent = Math.round(percentPosition) + '%';
-  };
-  let onMouseUp;
-  onMouseUp = (e) => {
-    window.removeEventListener('mousemove', onMouseMove);
-    tooltip.style.opacity = 0;
-
-    btn.addEventListener('mouseover', function () {
-      tooltip.style.opacity = 1;
-    });
-
-    btn.addEventListener('mouseout', function () {
-      tooltip.style.opacity = 0;
-    });
-  };
 };
 
+// Initialize slider
 dragElement(container, btn);
 
-/*  play button  */
-let onPlay = false;
-playBtn.addEventListener('click', function (e) {
+// ===== AUDIO PLAYER FUNCTIONALITY =====
+let isPlaying = false;
+
+playBtn.addEventListener('click', (e) => {
   e.preventDefault();
-  pause.classList.toggle('visibility');
-  play.classList.toggle('visibility');
-  playBtn.classList.toggle('shadow');
-  wave1.classList.toggle('paused');
-  wave2.classList.toggle('paused');
-  if (!onPlay){
-    onPlay = true;
-   // console.log(onPlay)
- }else{
-   onPlay = false;
-  // console.log(onPlay)
- }
- if (!onPlay){
-  playAudio();
-  console.log(onPlay)
- }else{
-  stopAudio();
-  console.log(onPlay)
- }
+  
+  console.log('🎮 Click sul play button!');
+  console.log('📊 Stato prima del click - isPlaying:', isPlaying);
+  
+  // Toggle play state
+  isPlaying = !isPlaying;
+  
+  console.log('📊 Stato dopo il toggle - isPlaying:', isPlaying);
+  
+  // Update UI elements based on state
+  if (isPlaying) {
+    // Playing: hide play (add visibility), show pause (add visibility)
+    console.log('▶️ Tentativo di riproduzione audio...');
+    console.log('🔊 Volume corrente:', audio.volume);
+    console.log('🎵 Audio pronto:', audio.readyState >= 2);
+    
+    play.classList.add('visibility');    // Nascondi play (opacity: 0)
+    pause.classList.add('visibility');   // Mostra pause (opacity: 1)
+    playBtn.classList.add('shadow');
+    wave1.classList.remove('paused');
+    wave2.classList.remove('paused');
+    
+    audio.play()
+      .then(() => {
+        console.log('✅ Audio in riproduzione!');
+      })
+      .catch(err => {
+        console.error('❌ Errore riproduzione:', err);
+        console.error('Dettagli:', err.message);
+      });
+  } else {
+    // Paused: show play (remove visibility), hide pause (remove visibility)
+    console.log('⏸️ Pausa audio');
+    play.classList.remove('visibility'); // Mostra play (opacity: 1)
+    pause.classList.remove('visibility'); // Nascondi pause (opacity: 0)
+    playBtn.classList.remove('shadow');
+    wave1.classList.add('paused');
+    wave2.classList.add('paused');
+    audio.pause();
+    console.log('✅ Audio in pausa');
+  }
+});
+// ===== ACCESSIBILITY IMPROVEMENTS =====
+// Add keyboard support for slider
+container.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    const currentValue = parseInt(tooltip.textContent);
+    const step = 5;
+    let newValue = currentValue;
+    
+    if (e.key === 'ArrowLeft') {
+      newValue = Math.max(0, currentValue - step);
+    } else if (e.key === 'ArrowRight') {
+      newValue = Math.min(100, currentValue + step);
+    }
+    
+    const targetRect = container.getBoundingClientRect();
+    const newX = (newValue / 100) * targetRect.width - 10;
+    
+    btn.x = newX;
+    btn.style.left = `${newX}px`;
+    color.style.width = `${newValue}%`;
+    tooltip.textContent = `${newValue}%`;
+    
+    if (audio) {
+      audio.volume = newValue / 100;
+    }
+  }
 });
 
-
-
-function playAudio() {
-  var x = document.getElementById("myAudio");
-  x.play();
-}
-
-function stopAudio() {
-  var x = document.getElementById("myAudio");
-  x.pause();
-}
-
-//controllo volume
-
-let slider = document.getElementById('find2');
-let valore = slider.innerHTML;
-console.log(valore);
-//sistemare l'evento perchè+ ancora un po impreciso al rilascio del mouse
-let cursore = document.getElementById('find');
-cursore.addEventListener('mouseup', function() {
-  valore = slider.innerHTML.replace('%', '');
-  console.log(valore); // Output: "50" (senza il simbolo %)
-  var x = document.getElementById("myAudio");
-  x.volume = valore/100;
-});
 
