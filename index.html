@@ -40,136 +40,153 @@
   </audio>
 
   <main class="container" role="main">
-    <section class="components" aria-label="Componenti UI interattivi">
-
-      <div class="switch" role="group" aria-label="Switch controls">
-        <div class="switch__1">
-          <input id="switch-1" type="checkbox" aria-label="Switch 1">
-          <label for="switch-1"></label>
-        </div>
-
-        <div class="switch__2">
-          <input id="switch-2" type="checkbox" checked aria-label="Switch 2">
-          <label for="switch-2"></label>
-        </div>
-      </div>
-
-      <div class="checkbox" role="group" aria-label="Checkbox controls">
-        <div class="checkbox__1">
-          <input id="checkbox-1" type="checkbox" aria-label="Checkbox 1">
-          <label for="checkbox-1">
-            <i class="material-icons" aria-hidden="true">done</i></label>
-        </div>
-        <div class="checkbox__2">
-          <input id="checkbox-2" type="checkbox" checked aria-label="Checkbox 2">
-          <label for="checkbox-2">
-            <i class="material-icons" aria-hidden="true">done</i></label>
-        </div>
-      </div>
-
-      <div class="radio" role="radiogroup" aria-label="Radio controls">
-        <div class="radio__1">
-          <input id="radio-1" type="radio" name="radio" value="1" aria-label="Opzione 1">
-          <label for="radio-1"></label>
-        </div>
-
-        <div class="radio__2">
-          <input id="radio-2" type="radio" name="radio" value="2" checked aria-label="Opzione 2">
-          <label for="radio-2"></label>
-        </div>
-      </div>
-
-      <button class="btn btn__primary" aria-label="Primary action button">
-        <p>Button</p>
-      </button>
-      <button class="btn btn__secondary" aria-label="Secondary action button">
-        <p>Button</p>
-      </button>
-
-      <div class="clock" role="img" aria-label="Orologio analogico">
-        <div class="hand hours"></div>
-        <div class="hand minutes"></div>
-        <div class="hand seconds"></div>
-        <div class="point"></div>
-        <div class="marker">
-          <span class="marker__1"></span>
-          <span class="marker__2"></span>
-          <span class="marker__3"></span>
-          <span class="marker__4"></span>
-        </div>
-      </div>
-
-      <div class="chip" role="status" aria-label="Chip informativo">
-        <div class="chip__icon" aria-hidden="true">
-          <ion-icon name="color-palette"></ion-icon>
-        </div>
-        <p>Neumorphic Design</p>
-        <button class="chip__close" aria-label="Chiudi chip">
-          <ion-icon name="close"></ion-icon>
-        </button>
-      </div>
-
-      <div class="circle" role="region" aria-label="Audio player controls">
-        <button class="circle__btn" aria-label="Play/Pause audio" aria-pressed="false">
-          <ion-icon class="play" name="play" aria-hidden="true"></ion-icon>
-          <ion-icon class="pause" name="pause" aria-hidden="true"></ion-icon>
-        </button>
-        <span class="circle__back-1"></span>
-        <span class="circle__back-2"></span>
-      </div>
-
-      <div class="form">
-        <input type="text" class="form__input" placeholder="Scrivi qualcosa..." aria-label="Input di testo">
-      </div>
-
-      <form class="search" action="https://www.google.com/search" method="get" target="_blank" role="search">
-        <div class="search">
-          <input type="text" name="q" class="search__input" placeholder="Cerca..." aria-label="Campo di ricerca">
-          <div class="search__icon" aria-hidden="true">
-            <ion-icon name="search"></ion-icon>
+    <!-- Dashboard Compatta -->
+    <section class="dashboard-compact" aria-label="Dashboard principale">
+      
+      <!-- Header con Orologio -->
+      <div class="dashboard-header">
+        <div class="clock" role="img" aria-label="Orologio analogico">
+          <div class="hand hours"></div>
+          <div class="hand minutes"></div>
+          <div class="hand seconds"></div>
+          <div class="point"></div>
+          <div class="marker">
+            <span class="marker__1"></span>
+            <span class="marker__2"></span>
+            <span class="marker__3"></span>
+            <span class="marker__4"></span>
           </div>
         </div>
-      </form>
-
-      <div class="segmented-control" role="tablist" aria-label="Segmented control tabs">
-
-        <input type="radio" name="radio2" value="3" id="tab-1" checked aria-label="Tab 1" />
-        <label for="tab-1" class="segmented-control__1" role="tab" aria-selected="true">
-          <p>Tab 1</p>
-        </label>
-
-        <input type="radio" name="radio2" value="4" id="tab-2" aria-label="Tab 2" />
-        <label for="tab-2" class="segmented-control__2" role="tab" aria-selected="false">
-          <p>Tab 2</p>
-        </label>
-
-        <input type="radio" name="radio2" value="5" id="tab-3" aria-label="Tab 3" />
-        <label for="tab-3" class="segmented-control__3" role="tab" aria-selected="false">
-          <p>Tab 3</p>
-        </label>
-
-        <div class="segmented-control__color"></div>
-      </div>
-
-      <nav class="icon" role="navigation" aria-label="Icone di navigazione">
-        <button class="icon__home" aria-label="Home">
-          <ion-icon name="home" aria-hidden="true"></ion-icon>
-        </button>
-        <button class="icon__account" aria-label="Account">
-          <ion-icon name="person" aria-hidden="true"></ion-icon>
-        </button>
-        <button class="icon__settings" aria-label="Impostazioni">
-          <ion-icon name="settings" aria-hidden="true"></ion-icon>
-        </button>
-      </nav>
-
-      <div class="slider" id="find0" role="region" aria-label="Controllo volume">
-        <div class="slider__box" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-label="Slider volume" tabindex="0">
-          <span class="slider__btn" id="find"></span>
-          <span class="slider__color" id="find1"></span>
-          <span class="slider__tooltip" id="find2" role="tooltip">50%</span>
+        
+        <div class="dashboard-title">
+          <h1>Dashboard Neumorphic</h1>
+          <p>Il tuo spazio personale</p>
         </div>
       </div>
+
+      <!-- Player Audio -->
+      <div class="audio-player-section">
+        <div class="player-controls">
+          <button class="circle__btn" aria-label="Play/Pause audio" aria-pressed="false">
+            <ion-icon class="play" name="play" aria-hidden="true"></ion-icon>
+            <ion-icon class="pause" name="pause" aria-hidden="true"></ion-icon>
+          </button>
+          <span class="circle__back-1"></span>
+          <span class="circle__back-2"></span>
+        </div>
+        
+        <div class="player-info">
+          <div class="track-title" id="current-track-name">04 - Boss Theme 3.mp3</div>
+          <div class="volume-control">
+            <ion-icon name="volume-medium"></ion-icon>
+            <div class="slider" id="find0">
+              <div class="slider__box" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
+                <span class="slider__btn" id="find"></span>
+                <span class="slider__color" id="find1"></span>
+                <span class="slider__tooltip" id="find2" role="tooltip">50%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="main-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="playlist" role="tab" aria-selected="true">
+          <ion-icon name="musical-notes"></ion-icon>
+          <span>Playlist</span>
+        </button>
+        <button class="tab-btn" data-tab="search" role="tab" aria-selected="false">
+          <ion-icon name="search"></ion-icon>
+          <span>Ricerca</span>
+        </button>
+        <button class="tab-btn" data-tab="notes" role="tab" aria-selected="false">
+          <ion-icon name="document-text"></ion-icon>
+          <span>Note</span>
+        </button>
+      </div>
+
+      <!-- Tab Content: Playlist -->
+      <div class="tab-content active" id="playlist-tab" role="tabpanel">
+        <div class="tab-header">
+          <h2>La tua Playlist</h2>
+          <label for="audio-upload" class="btn-upload" aria-label="Carica file audio">
+            <ion-icon name="add-circle"></ion-icon>
+            <span>Carica</span>
+          </label>
+          <input type="file" id="audio-upload" accept="audio/*" multiple hidden>
+        </div>
+        
+        <div class="playlist-container" id="playlist" role="list">
+          <div class="playlist-empty">
+            <ion-icon name="musical-notes-outline"></ion-icon>
+            <p>Nessuna traccia caricata</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Ricerca -->
+      <div class="tab-content" id="search-tab" role="tabpanel">
+        <div class="tab-header">
+          <h2>Ricerca Internet</h2>
+        </div>
+        
+        <form class="search-form" action="https://www.google.com/search" method="get" target="_blank" role="search">
+          <div class="search-input-wrapper">
+            <ion-icon name="search"></ion-icon>
+            <input type="text" name="q" class="search-input" placeholder="Cerca su Google..." aria-label="Campo di ricerca">
+            <button type="submit" class="search-btn">
+              <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+          </div>
+        </form>
+        
+        <div class="search-suggestions">
+          <p class="section-label">Ricerche rapide:</p>
+          <div class="quick-searches">
+            <button class="quick-search-btn" data-query="meteo">
+              <ion-icon name="partly-sunny"></ion-icon>
+              Meteo
+            </button>
+            <button class="quick-search-btn" data-query="notizie">
+              <ion-icon name="newspaper"></ion-icon>
+              Notizie
+            </button>
+            <button class="quick-search-btn" data-query="youtube">
+              <ion-icon name="logo-youtube"></ion-icon>
+              YouTube
+            </button>
+            <button class="quick-search-btn" data-query="gmail">
+              <ion-icon name="mail"></ion-icon>
+              Gmail
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Note -->
+      <div class="tab-content" id="notes-tab" role="tabpanel">
+        <div class="tab-header">
+          <h2>Le tue Note</h2>
+          <button class="btn-save-notes" id="save-notes">
+            <ion-icon name="save"></ion-icon>
+            <span>Salva</span>
+          </button>
+        </div>
+        
+        <textarea 
+          class="notes-editor" 
+          id="notes-textarea" 
+          placeholder="Scrivi le tue note qui...&#10;&#10;Le note vengono salvate automaticamente nel browser."
+          aria-label="Editor note"
+        ></textarea>
+        
+        <div class="notes-info">
+          <ion-icon name="information-circle"></ion-icon>
+          <span id="notes-status">Ultima modifica: mai</span>
+        </div>
+      </div>
+
     </section>
   
   </main>

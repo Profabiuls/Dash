@@ -709,3 +709,245 @@
     }
   }
   
+  /*  PLAYLIST SECTION  */
+  .playlist-section {
+    width: 75rem;
+    margin: 3rem auto;
+    padding: 3rem;
+    border-radius: 3rem;
+    box-shadow: .8rem .8rem 1.4rem var(--greyLight-2), 
+                -.2rem -.2rem 1.8rem var(--white);
+    background: var(--greyLight-1);
+  }
+  
+  .playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    
+    h2 {
+      font-size: 2.4rem;
+      color: var(--greyDark);
+      font-weight: 600;
+    }
+    
+    .btn-upload {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      background: var(--primary);
+      color: var(--white);
+      font-size: 1.4rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .3s ease;
+      box-shadow: $shadow;
+      
+      ion-icon {
+        font-size: 2rem;
+      }
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: .4rem .4rem .8rem var(--greyLight-2), 
+                    -.2rem -.2rem .6rem var(--white);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: $inner-shadow;
+      }
+    }
+  }
+  
+  .playlist-container {
+    min-height: 20rem;
+    max-height: 40rem;
+    overflow-y: auto;
+    padding: 1rem;
+    border-radius: 2rem;
+    box-shadow: $inner-shadow;
+    
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+      width: .8rem;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 1rem 0;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--greyLight-3);
+      border-radius: .4rem;
+      
+      &:hover {
+        background: var(--greyDark);
+      }
+    }
+  }
+  
+  .playlist-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 20rem;
+    color: var(--greyLight-3);
+    text-align: center;
+    
+    ion-icon {
+      font-size: 6rem;
+      margin-bottom: 1rem;
+      opacity: .5;
+    }
+    
+    p {
+      font-size: 1.6rem;
+      margin: .5rem 0;
+      
+      &.playlist-hint {
+        font-size: 1.2rem;
+        color: var(--greyDark);
+      }
+    }
+  }
+  
+  .playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 1.5rem;
+    background: var(--greyLight-1);
+    box-shadow: $shadow;
+    cursor: pointer;
+    transition: all .3s ease;
+    
+    &:hover {
+      transform: translateX(5px);
+      
+      .track-play {
+        opacity: 1;
+      }
+    }
+    
+    &.active {
+      box-shadow: $inner-shadow;
+      background: linear-gradient(135deg, var(--greyLight-1) 0%, var(--greyLight-2) 100%);
+      
+      .track-icon {
+        color: var(--primary);
+        
+        ion-icon {
+          animation: pulse 2s ease-in-out infinite;
+        }
+      }
+      
+      .track-name {
+        color: var(--primary);
+        font-weight: 600;
+      }
+    }
+    
+    .track-icon {
+      width: 4rem;
+      height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1rem;
+      background: var(--greyLight-1);
+      box-shadow: $shadow;
+      color: var(--greyDark);
+      
+      ion-icon {
+        font-size: 2.4rem;
+      }
+    }
+    
+    .track-info {
+      flex: 1;
+      min-width: 0;
+      
+      .track-name {
+        font-size: 1.4rem;
+        font-weight: 500;
+        color: var(--greyDark);
+        margin-bottom: .4rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .track-size {
+        font-size: 1.2rem;
+        color: var(--greyLight-3);
+      }
+    }
+    
+    .track-play {
+      width: 3.6rem;
+      height: 3.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--greyLight-1);
+      box-shadow: $shadow;
+      color: var(--primary);
+      opacity: 0;
+      transition: all .3s ease;
+      
+      ion-icon {
+        font-size: 2rem;
+      }
+      
+      &:hover {
+        box-shadow: $inner-shadow;
+        transform: scale(.95);
+      }
+    }
+  }
+  
+  .now-playing {
+    margin-top: 2rem;
+    padding: 1.5rem 2rem;
+    border-radius: 1.5rem;
+    background: var(--greyLight-1);
+    box-shadow: $inner-shadow;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    ion-icon {
+      font-size: 2rem;
+      color: var(--primary);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    span {
+      font-size: 1.4rem;
+      color: var(--greyDark);
+      
+      strong {
+        color: var(--primary);
+        font-weight: 600;
+      }
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+  
