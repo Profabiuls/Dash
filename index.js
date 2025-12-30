@@ -1,3 +1,31 @@
+// ===== THEME TOGGLE =====
+const themeToggle = document.getElementById('theme-toggle');
+const htmlElement = document.documentElement;
+
+const getStoredTheme = () => localStorage.getItem('dashboard-theme') || 'light';
+const setStoredTheme = (theme) => localStorage.setItem('dashboard-theme', theme);
+
+const setTheme = (theme) => {
+  htmlElement.setAttribute('data-theme', theme);
+  setStoredTheme(theme);
+  console.log(`🎨 Tema cambiato: ${theme}`);
+};
+
+const toggleTheme = () => {
+  const currentTheme = htmlElement.getAttribute('data-theme') || 'light';
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  setTheme(newTheme);
+};
+
+themeToggle.addEventListener('click', toggleTheme);
+
+const initTheme = () => {
+  const storedTheme = getStoredTheme();
+  setTheme(storedTheme);
+};
+
+initTheme();
+
 // ===== CLOCK FUNCTIONALITY =====
 const hours = document.querySelector('.hours');
 const minutes = document.querySelector('.minutes');
