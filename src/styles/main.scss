@@ -27,6 +27,7 @@
     inset 1px 1px 1px var(--greyLight-2),
     inset -1px -1px 1px var(--white);
   --slider-track: var(--greyLight-3);
+  --slider-thumb: var(--surface);
   --wave-gradient: linear-gradient(to bottom right, var(--greyLight-2) 0%, var(--white) 100%);
 }
 
@@ -52,6 +53,7 @@
     inset 1px 1px 1px #2a2a2a,
     inset -1px -1px 1px #0a0a0a;
   --slider-track: #333333;
+  --slider-thumb: #d0d0d0;
   --wave-gradient: linear-gradient(to bottom right, #2a2a2a 0%, #1f1f1f 100%);
 }
 
@@ -410,10 +412,9 @@ button {
     height: 5%;
     min-height: 0.4rem;
     border-radius: 0.3rem;
-    background: var(--primary);
-    box-shadow:
-      inset 0.1rem 0.1rem 0.2rem var(--primary-light),
-      inset -0.1rem -0.1rem 0.2rem var(--primary-dark);
+    // Gradiente classico da VU meter: verde -> giallo -> rosso verso la punta.
+    background: linear-gradient(to top, #4ade80 0%, #facc15 55%, #ef4444 100%);
+    box-shadow: 0 0 0.4rem rgba(74, 222, 128, 0.3);
     transition: height 0.05s linear;
   }
 }
@@ -466,8 +467,10 @@ button {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    background: var(--surface);
-    box-shadow: 0 0.1rem 0.3rem 0 var(--greyLight-3);
+    background: var(--slider-thumb);
+    box-shadow:
+      0 0.1rem 0.3rem 0 var(--greyLight-3),
+      0 0 0 2px var(--greyDark);
     margin-top: -0.5rem;
     border: none;
   }
@@ -476,8 +479,10 @@ button {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    background: var(--surface);
-    box-shadow: 0 0.1rem 0.3rem 0 var(--greyLight-3);
+    background: var(--slider-thumb);
+    box-shadow:
+      0 0.1rem 0.3rem 0 var(--greyLight-3),
+      0 0 0 2px var(--greyDark);
     border: none;
   }
 
