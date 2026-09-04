@@ -123,7 +123,7 @@ export class AudioPlayerController {
 
     this.audioContext = new ContextClass();
     this.analyser = this.audioContext.createAnalyser();
-    this.analyser.fftSize = 32;
+    this.analyser.fftSize = 256;
 
     const source = this.audioContext.createMediaElementSource(this.audio);
     source.connect(this.analyser);
@@ -133,22 +133,29 @@ export class AudioPlayerController {
   private startVuMeter(): void {
     if (!this.analyser || this.vuBars.length !== VU_BAR_COUNT) return;
 
-    const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-    const step = Math.floor(dataArray.length / VU_BAR_COUNT);
+    const bufferLength = this.analyser.fftSize;
+    const samplesPerBar = Math.floor(bufferLength / VU_BAR_COUNT);
+    const timeData = new Float32Array(bufferLength);
 
     const updateBars = () => {
-      this.analyser!.getByteFrequencyData(dataArray);
+      // Usiamo i campioni nel dominio del tempo e calcoliamo il valore RMS
+      // per ogni segmento, che e' molto piu' fedele al volume percepito rispetto
+      // ai dati di frequenza grezzi.
+      this.analyser!.getFloatTimeDomainData(timeData);
 
-      // Il volume dell'elemento audio non influenza i dati dell'analizzatore.
-      // Moltiplichiamo quindi il segnale per il volume attuale e applichiamo
-      // un fattore di amplificazione cosi' che i picchi possano raggiungere il rosso.
-      const volume = this.audio.volume;
-      const amplification = 1.8;
+      const volumeFactor = this.audio.volume * 2.5;
 
       this.vuBars.forEach((bar, index) => {
-        const rawValue = dataArray[index * step] ?? 0;
-        const normalized = (rawValue / 255) * volume * amplification;
-        const percentage = Math.min(100, normalized * 100);
+        const start = index * samplesPerBar;
+        const end = start + samplesPerBar;
+        let sumSquares = 0;
+
+        for (let i = start; i < end; i++) {
+          sumSquares += timeData[i] * timeData[i];
+        }
+
+        const rms = Math.sqrt(sumSquares / samplesPerBar);
+        const percentage = Math.min(100, rms * 100 * volumeFactor);
         bar.style.height = `${Math.max(5, percentage)}%`;
       });
 
