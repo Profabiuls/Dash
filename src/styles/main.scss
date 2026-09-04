@@ -32,17 +32,19 @@
 
 [data-theme="dark"] {
   // Palette dark su toni nero e grigio scuro, con accento viola/blu.
+  // --white e --greyLight-2 sono invertiti rispetto al tema chiaro:
+  // --white diventa l'highlight chiaro, --greyLight-2 l'ombra scura.
   --primary-light: #a3b1ff;
   --primary: #7d6dff;
   --primary-dark: #5b0eeb;
-  --white: #1a1a1a;
+  --white: #2a2a2a;
   --greyLight-1: #141414;
   --greyLight-2: #0a0a0a;
-  --greyLight-3: #2a2a2a;
+  --greyLight-3: #1a1a1a;
   --greyDark: #b0b0b0;
 
-  // In dark mode i componenti hanno una superficie leggermente più chiara
-  // rispetto allo sfondo, per mantenere visibile l'effetto neumorfico.
+  // I componenti hanno una superficie leggermente più chiara rispetto allo sfondo,
+  // per mantenere visibile l'effetto neumorfico tra highlight e ombra.
   --surface: #1c1c1c;
   --clock-hand-hours: #d0d0d0;
   --clock-hand-minutes: #f5f5f5;
