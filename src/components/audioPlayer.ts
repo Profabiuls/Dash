@@ -139,9 +139,16 @@ export class AudioPlayerController {
     const updateBars = () => {
       this.analyser!.getByteFrequencyData(dataArray);
 
+      // Il volume dell'elemento audio non influenza i dati dell'analizzatore.
+      // Moltiplichiamo quindi il segnale per il volume attuale e applichiamo
+      // un fattore di amplificazione cosi' che i picchi possano raggiungere il rosso.
+      const volume = this.audio.volume;
+      const amplification = 1.8;
+
       this.vuBars.forEach((bar, index) => {
-        const value = dataArray[index * step] ?? 0;
-        const percentage = Math.min(100, (value / 255) * 100);
+        const rawValue = dataArray[index * step] ?? 0;
+        const normalized = (rawValue / 255) * volume * amplification;
+        const percentage = Math.min(100, normalized * 100);
         bar.style.height = `${Math.max(5, percentage)}%`;
       });
 
