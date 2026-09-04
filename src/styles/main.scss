@@ -412,8 +412,17 @@ button {
     height: 5%;
     min-height: 0.4rem;
     border-radius: 0.3rem;
-    // Gradiente classico da VU meter: verde -> giallo -> rosso verso la punta.
-    background: linear-gradient(to top, #4ade80 0%, #facc15 55%, #ef4444 100%);
+    // Zone fisse simili a un vero VU meter: verde nella parte bassa,
+    // verde scuro nella zona centrale, rosso solo quando la colonna tocca l'alto.
+    background: linear-gradient(
+      to top,
+      #22c55e 0%,
+      #22c55e 45%,
+      #15803d 45%,
+      #15803d 75%,
+      #ef4444 75%,
+      #ef4444 100%
+    );
     box-shadow: 0 0 0.4rem rgba(74, 222, 128, 0.3);
     transition: height 0.05s linear;
   }
