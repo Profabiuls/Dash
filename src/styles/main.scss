@@ -412,17 +412,15 @@ button {
     height: 5%;
     min-height: 0.4rem;
     border-radius: 0.3rem;
-    // Le zone di colore sono legate all'altezza massima del VU meter,
-    // non all'altezza attuale della singola barra: cosi' un livello basso
-    // mostra solo verde, uno medio aggiunge il verde scuro e solo i picchi
-    // raggiungono il rosso.
+    // Il gradiente e' legato all'altezza massima del VU meter, non a quella
+    // attuale della singola barra: in basso verde, al centro verde chiaro/giallo,
+    // in alto arancione e rosso. Una colonna bassa mostrera' solo le tonalita' verdi.
     background: linear-gradient(
       to top,
       #22c55e 0%,
-      #22c55e 2.7rem,
-      #15803d 2.7rem,
-      #15803d 4.5rem,
-      #ef4444 4.5rem,
+      #4ade80 2rem,
+      #facc15 3.8rem,
+      #f97316 4.8rem,
       #ef4444 6rem
     );
     background-size: 100% 6rem;
