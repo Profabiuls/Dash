@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 
 # IDE
 .vscode/
@@ -14,6 +13,7 @@ package-lock.json
 Thumbs.db
 
 # Build
+dist/
 *.css.map
 
 # Logs

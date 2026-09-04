@@ -1,13 +1,14 @@
 {
   "name": "neumorphic-dashboard",
-  "version": "2.0.0",
-  "description": "Dashboard interattiva con design Neumorphic moderno - Include orologio analogico, player audio, e componenti UI interattivi",
-  "main": "index.js",
+  "version": "3.0.0",
+  "description": "Dashboard interattiva con design Neumorphic moderno - TypeScript, Vite, componenti UI accessibili",
+  "type": "module",
   "scripts": {
-    "start": "python3 -m http.server 8080",
-    "sass:watch": "sass --watch style.scss:style.css",
-    "sass:build": "sass style.scss:style.css --style=compressed",
-    "serve": "python3 -m http.server 8080"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "keywords": [
     "dashboard",
@@ -16,7 +17,9 @@
     "ui",
     "components",
     "audio-player",
-    "interactive"
+    "interactive",
+    "typescript",
+    "vite"
   ],
   "author": "Fabio Murtas",
   "license": "MIT",
@@ -25,6 +28,9 @@
     "url": "git+https://github.com/profabiuls/dash.git"
   },
   "devDependencies": {
-    "sass": "^1.69.5"
+    "sass": "^1.69.7",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0"
   }
 }

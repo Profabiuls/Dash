@@ -274,18 +274,34 @@ node_modules/
 
 ---
 
-## 📝 Note Finali
+## Piano di Refactoring TypeScript + Vite
 
-Tutte le migliorie sono state implementate mantenendo:
-- ✅ Compatibilità con il design esistente
-- ✅ Zero breaking changes funzionali
-- ✅ Performance invariate o migliorate
-- ✅ Retrocompatibilità browser
+Questa sezione traccia il piano di refactoring completato per portare il progetto a un'architettura modulare, type-safe, testabile e realmente production-ready.
 
-Il progetto è ora **production-ready** e segue le moderne best practices di sviluppo web.
+| # | Task | Stato |
+|---|------|-------|
+| 1 | Pulizia iniziale: rimuovere log di debug, correggere bug JS, rendere sicura la gestione playlist e localStorage | Completato |
+| 2 | Consolidare SCSS in un unico sorgente, completare dark mode e aggiungere `prefers-reduced-motion` | Completato |
+| 3 | Accessibilità: ARIA corretti su toggle/tabs/slider, navigazione da tastiera, icone decorative | Completato |
+| 4 | Refactor di `index.js` in moduli ES6 separati per responsabilità | Completato |
+| 5 | Configurare TypeScript + Vite (`tsconfig.json`, `vite.config.ts`, struttura `src/`) | Completato |
+| 6 | Migrare i moduli JavaScript a TypeScript con type safety | Completato |
+| 7 | Aggiungere test unitari con Vitest per le utilities | Completato |
+| 8 | Aggiornare documentazione (`README.md`, `MIGLIORIE.md`) | Completato |
+| 9 | Miglioramenti UX post-refactoring: palette dark nero/grigio, slider con riempimento progressivo, VU meter isomorfo | Completato |
+
+**Data inizio refactoring**: 5 Settembre 2026  
+**Versione rilasciata**: 3.0.0  
+**Stack**: TypeScript, Vite, SCSS, Vitest
 
 ---
 
-**Data ultima modifica**: Dicembre 2024  
-**Versione progetto**: 2.0.0  
-**Autore migliorie**: Cascade AI Assistant
+## Note Finali
+
+Il progetto e' stato riscritto con una struttura modulare. I file legacy (`index.js`, `style.scss`, `style-compact.scss`, `style.css`, `readme.txt`) sono stati rimossi dopo aver verificato che la nuova build funzionasse correttamente. La dashboard ora usa Vite per lo sviluppo e la produzione, TypeScript per la type safety, SCSS con variabili CSS per il tema, e Vitest per i test.
+
+---
+
+**Data ultima modifica**: 5 Settembre 2026  
+**Versione progetto**: 3.0.0  
+**Autore migliorie**: Devin AI Assistant
