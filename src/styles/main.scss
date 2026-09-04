@@ -467,52 +467,81 @@ button {
 .volume-slider {
   flex: 1;
   width: 100%;
-  height: 1rem;
+  height: 0.9rem;
   border-radius: 1rem;
-  background: var(--surface);
+  background: var(--slider-track);
   box-shadow: $inner-shadow;
   appearance: none;
   cursor: pointer;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow:
+      inset 0.15rem 0.15rem 0.35rem var(--greyLight-2),
+      inset -0.15rem -0.15rem 0.35rem var(--white),
+      0 0 0.6rem rgba(109, 93, 252, 0.2);
+  }
 
   &::-webkit-slider-thumb {
     appearance: none;
-    width: 2rem;
-    height: 2rem;
+    width: 2.2rem;
+    height: 2.2rem;
     border-radius: 50%;
     background: var(--slider-thumb);
+    border: 0.25rem solid var(--primary);
     box-shadow:
-      0 0.1rem 0.3rem 0 var(--greyLight-3),
-      0 0 0 2px var(--greyDark);
-    margin-top: -0.5rem;
-    border: none;
+      0.2rem 0.2rem 0.5rem var(--greyLight-2),
+      -0.15rem -0.15rem 0.4rem var(--white),
+      inset 0.15rem 0.15rem 0.3rem rgba(255, 255, 255, 0.4);
+    margin-top: -0.7rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  &::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
+
+  &::-webkit-slider-thumb:active {
+    box-shadow: $inner-shadow;
   }
 
   &::-moz-range-thumb {
-    width: 2rem;
-    height: 2rem;
+    width: 2.2rem;
+    height: 2.2rem;
     border-radius: 50%;
     background: var(--slider-thumb);
+    border: 0.25rem solid var(--primary);
     box-shadow:
-      0 0.1rem 0.3rem 0 var(--greyLight-3),
-      0 0 0 2px var(--greyDark);
-    border: none;
+      0.2rem 0.2rem 0.5rem var(--greyLight-2),
+      -0.15rem -0.15rem 0.4rem var(--white),
+      inset 0.15rem 0.15rem 0.3rem rgba(255, 255, 255, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
-  // Il gradiente di riempimento viene impostato dinamicamente da JavaScript
-  // in modo che la parte sinistra dello slider rifletta il volume attuale.
+  &::-moz-range-thumb:hover {
+    transform: scale(1.1);
+  }
+
+  &::-moz-range-thumb:active {
+    box-shadow: $inner-shadow;
+  }
+
+  // Il riempimento viene impostato dinamicamente da JavaScript.
+  // Manteniamo la traccia pulita con solo raggio e altezza: il colore del
+  // riempimento e' solido e gestito inline, evitando gradienti sovrapposti.
   &::-webkit-slider-runnable-track {
-    height: 1rem;
+    height: 0.9rem;
     border-radius: 1rem;
   }
 
   &::-moz-range-track {
-    height: 1rem;
+    height: 0.9rem;
     border-radius: 1rem;
   }
 
   &:focus-visible {
     outline: 2px solid var(--primary);
-    outline-offset: 0.2rem;
+    outline-offset: 0.25rem;
   }
 }
 

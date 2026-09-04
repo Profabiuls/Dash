@@ -143,7 +143,7 @@ export class AudioPlayerController {
       // ai dati di frequenza grezzi.
       this.analyser!.getFloatTimeDomainData(timeData);
 
-      const volumeFactor = this.audio.volume * 2.5;
+      const volumeFactor = this.audio.volume * 6.0;
 
       this.vuBars.forEach((bar, index) => {
         const start = index * samplesPerBar;
