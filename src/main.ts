@@ -26,7 +26,7 @@ function initializeApp(): void {
   initializeClock();
 
   const audioController = new AudioPlayerController();
-  initializeVolumeSlider(audioController.audio);
+  initializeVolumeSlider(audioController);
 
   const playlist = new PlaylistManager('#playlist', (track) => {
     audioController.loadTrack(track);

@@ -16,6 +16,9 @@ const WAVES_PAUSED_CLASS = 'paused';
 const VISIBILITY_CLASS = 'visibility';
 const SHADOW_CLASS = 'shadow';
 const VU_BAR_COUNT = 12;
+const DEFAULT_VOLUME = 0.5;
+const VOLUME_PERCENTAGE_FACTOR = 100;
+const VU_METER_BASE_FACTOR = 6.0;
 
 export class AudioPlayerController {
   readonly audio: HTMLAudioElement;
@@ -33,7 +36,9 @@ export class AudioPlayerController {
 
   private audioContext: AudioContext | null = null;
   private analyser: AnalyserNode | null = null;
+  private gainNode: GainNode | null = null;
   private animationFrameId: number | null = null;
+  private volume = DEFAULT_VOLUME;
 
   constructor() {
     this.audio = getElement<HTMLAudioElement>('#audio-player');
@@ -47,6 +52,7 @@ export class AudioPlayerController {
 
     this.audio.addEventListener('ended', () => this.notifyEnded());
     this.playButton.addEventListener('click', () => this.togglePlayback());
+    this.audio.volume = DEFAULT_VOLUME;
   }
 
   /**
@@ -124,10 +130,29 @@ export class AudioPlayerController {
     this.audioContext = new ContextClass();
     this.analyser = this.audioContext.createAnalyser();
     this.analyser.fftSize = 256;
+    this.gainNode = this.audioContext.createGain();
+    this.gainNode.gain.value = this.volume;
 
     const source = this.audioContext.createMediaElementSource(this.audio);
-    source.connect(this.analyser);
+    source.connect(this.gainNode);
+    this.gainNode.connect(this.analyser);
     this.analyser.connect(this.audioContext.destination);
+  }
+
+  /**
+   * Imposta il volume di riproduzione (0-100).
+   *
+   * Poiche' l'audio passa attraverso un AudioContext, `HTMLAudioElement.volume`
+   * non e' sufficiente su tutti i motori (es. WebKit in Tauri). Il volume reale
+   * viene controllato tramite un GainNode nel grafo Web Audio.
+   */
+  setVolume(percentage: number): void {
+    const normalized = Math.max(0, Math.min(percentage, VOLUME_PERCENTAGE_FACTOR)) / VOLUME_PERCENTAGE_FACTOR;
+    this.volume = normalized;
+    this.audio.volume = normalized;
+    if (this.gainNode) {
+      this.gainNode.gain.value = normalized;
+    }
   }
 
   private startVuMeter(): void {
@@ -143,7 +168,7 @@ export class AudioPlayerController {
       // ai dati di frequenza grezzi.
       this.analyser!.getFloatTimeDomainData(timeData);
 
-      const volumeFactor = this.audio.volume * 6.0;
+      const volumeFactor = VU_METER_BASE_FACTOR;
 
       this.vuBars.forEach((bar, index) => {
         const start = index * samplesPerBar;

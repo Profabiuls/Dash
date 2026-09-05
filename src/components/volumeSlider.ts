@@ -1,14 +1,19 @@
 import { getElement } from '../utils/dom.js';
+import { AudioPlayerController } from './audioPlayer.js';
 
 /**
  * Slider del volume basato su <input type="range"> nativo.
  *
+ * Il volume e' applicato al GainNode del grafo Web Audio, non solo alla
+ * proprieta' `HTMLAudioElement.volume`, che su alcuni WebView (incluso quello
+ * di Tauri) non influenza l'output quando l'audio e' connesso a un AudioContext.
+ *
  * Preferiamo l'elemento nativo rispetto a un controllo completamente custom
- * perché fornisce accessibilità, supporto tastiera e screen reader di default,
- * riducendo la complessità e gli errori di implementazione ARIA.
+ * perche' fornisce accessibilita', supporto tastiera e screen reader di default,
+ * riducendo la complessita' e gli errori di implementazione ARIA.
  */
 
-const DEFAULT_VOLUME = 0.5;
+const DEFAULT_VOLUME = 50;
 const PERCENTAGE_FACTOR = 100;
 
 function updateSliderFill(slider: HTMLInputElement, percentage: number): void {
@@ -23,22 +28,22 @@ function updateSliderFill(slider: HTMLInputElement, percentage: number): void {
   )`;
 }
 
-function updateVolume(audio: HTMLAudioElement, value: number, label: HTMLElement, slider: HTMLInputElement): void {
+function updateVolume(controller: AudioPlayerController, value: number, label: HTMLElement, slider: HTMLInputElement): void {
   const percentage = Math.max(0, Math.min(value, PERCENTAGE_FACTOR));
-  audio.volume = percentage / PERCENTAGE_FACTOR;
+  controller.setVolume(percentage);
   label.textContent = `${Math.round(percentage)}%`;
   updateSliderFill(slider, percentage);
 }
 
-export function initializeVolumeSlider(audio: HTMLAudioElement): void {
+export function initializeVolumeSlider(controller: AudioPlayerController): void {
   const slider = getElement<HTMLInputElement>('#volume-slider');
   const valueLabel = getElement<HTMLElement>('#volume-value');
 
-  // Inizializza l'audio e lo slider allo stesso valore per coerenza.
-  slider.value = String(DEFAULT_VOLUME * PERCENTAGE_FACTOR);
-  updateVolume(audio, DEFAULT_VOLUME * PERCENTAGE_FACTOR, valueLabel, slider);
+  // Inizializza il controller, lo slider e l'etichetta allo stesso valore.
+  slider.value = String(DEFAULT_VOLUME);
+  updateVolume(controller, DEFAULT_VOLUME, valueLabel, slider);
 
   slider.addEventListener('input', () => {
-    updateVolume(audio, Number(slider.value), valueLabel, slider);
+    updateVolume(controller, Number(slider.value), valueLabel, slider);
   });
 }

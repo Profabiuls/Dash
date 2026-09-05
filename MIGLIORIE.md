@@ -4,7 +4,31 @@ Questo documento descrive tutte le ottimizzazioni e migliorie implementate nel p
 
 ---
 
-## 🔧 1. Ottimizzazione JavaScript (`index.js`)
+## �️ 10. App Desktop con Tauri
+
+### Conversione in applicazione nativa
+- **Wrapper desktop**: il frontend Vite/TypeScript/SCSS e' stato incapsulato in **Tauri 2** per produrre app native macOS e Windows senza duplicare il codice.
+- **Finestra widget**: configurazione `decorations: true`, `titleBarStyle: overlay`, `transparent: true`, `alwaysOnTop: true` e `shadow: true`; la finestra appare come un widget senza bordi e rimane in primo piano.
+- **Drag & drop**: trascinamento tramite `data-tauri-drag-region` sull'header, con permesso esplicito `core:window:allow-start-dragging` nelle capabilities Tauri (senza tale permesso il drag HTML viene bloccato silenziosamente).
+- **Stile desktop su sfondo trasparente**: riscrittura delle ombre per una superficie trasparente, con anello sfumato e highlight interno; la `dashboard-compact` riempie l'intera finestra.
+- **Bordo neumorfico**: ombre interne e gradient sul bordo senza aggiungere veri bordi, adattati a finestra senza sfondo.
+
+### Persistenza locale
+- **SQLite con `tauri-plugin-sql`**: le note e i metadati delle tracce sono passati da `localStorage` a un database SQLite locale.
+- **Filesystem con `tauri-plugin-fs`**: i file audio caricati vengono copiati nella cartella dati dell'app (`$APPLOCALDATA/audio`) e ricaricati automaticamente all'avvio, cosi' sopravvivono alla chiusura dell'app.
+- **Fallback web**: se l'app gira nel browser, il comportamento precedente con `localStorage` e `Blob` URL continua a funzionare.
+
+### Volume in Tauri
+- **GainNode Web Audio**: sostituito il controllo basato solo su `HTMLAudioElement.volume` con un `GainNode` nel grafo Web Audio. Questo risolve il problema del volume che non funzionava nella WebView di Tauri (WebKit) quando l'audio era connesso a `createMediaElementSource`.
+- Il VU meter e' stato lasciato dopo il `GainNode`, cosi' rispecchia il volume percepito.
+
+### Build e distribuzione
+- **Script npm**: aggiunti `dev:desktop` e `build:desktop` per sviluppo e produzione Tauri.
+- **CI GitHub Actions**: workflow `.github/workflows/build.yml` per compilare automaticamente i bundle macOS e Windows su push su `master`.
+
+---
+
+## �🔧 1. Ottimizzazione JavaScript (`index.js`)
 
 ### Miglioramenti Implementati:
 
