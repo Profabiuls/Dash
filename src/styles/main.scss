@@ -136,7 +136,6 @@ button {
   gap: 3rem;
   margin-bottom: 3rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid var(--greyLight-3);
 }
 
 .dashboard-title {
@@ -1045,6 +1044,104 @@ button {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tauri desktop widget
+// ---------------------------------------------------------------------------
+
+.is-tauri {
+  &,
+  body,
+  .container {
+    background: transparent;
+  }
+
+  font-size: 56.25%;
+  overflow: hidden;
+
+  &,
+  body {
+    height: 100%;
+  }
+
+  .container {
+    position: relative;
+    min-height: 100vh;
+    height: 100vh;
+    padding: 0;
+    align-items: stretch;
+  }
+
+  // Livello di luce sopra al contenuto: ricrea la profondita' del rilievo
+  // neumorfico (luce da in alto a sinistra, ombra in basso a destra) senza
+  // aggiungere bordi. Sta sul container, che non scrolla, e non intercetta
+  // i click.
+  .container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.2rem;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 80% at 0% 0%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 45%),
+      radial-gradient(120% 80% at 100% 100%, rgba(120, 135, 175, 0.28) 0%, rgba(120, 135, 175, 0) 45%);
+    box-shadow:
+      inset 0.4rem 0.4rem 1.2rem rgba(255, 255, 255, 0.65),
+      inset -0.4rem -0.4rem 1.2rem rgba(120, 135, 175, 0.35);
+    z-index: 1;
+  }
+
+  &[data-theme="dark"] .container::after {
+    background:
+      radial-gradient(120% 80% at 0% 0%, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0) 45%),
+      radial-gradient(120% 80% at 100% 100%, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 45%);
+    box-shadow:
+      inset 0.4rem 0.4rem 1.2rem rgba(255, 255, 255, 0.08),
+      inset -0.4rem -0.4rem 1.2rem rgba(0, 0, 0, 0.7);
+  }
+
+  // La finestra coincide con il widget: niente margini esterni. Il raggio
+  // segue quello delle finestre macOS. Su sfondo trasparente le ombre
+  // neumorfiche classiche non funzionano, quindi il rilievo e' reso da un
+  // anello sfumato (bordo trasparente + gradient in background-clip) e da un
+  // highlight interno; l'ombra esterna e' quella nativa del sistema.
+  .dashboard-compact {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 1.2rem;
+    border: 0.2rem solid transparent;
+    background:
+      linear-gradient(var(--surface), var(--surface)) padding-box,
+      linear-gradient(145deg, var(--white) 0%, var(--greyLight-2) 50%, var(--greyLight-3) 100%) border-box;
+    box-shadow:
+      inset 0.15rem 0.15rem 0.4rem var(--white),
+      inset -0.15rem -0.15rem 0.4rem var(--greyLight-2);
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .dashboard-compact::-webkit-scrollbar {
+    display: none;
+  }
+
+  &[data-theme="dark"] .dashboard-compact {
+    box-shadow:
+      inset 0.15rem 0.15rem 0.4rem rgba(255, 255, 255, 0.06),
+      inset -0.15rem -0.15rem 0.4rem rgba(0, 0, 0, 0.6);
+  }
+
+  .dashboard-header {
+    padding-top: 4rem;
+    cursor: grab;
+  }
+
+  .dashboard-header:active {
+    cursor: grabbing;
   }
 }
 

@@ -6,6 +6,8 @@
  */
 
 export interface Track {
+  /** Identificativo persistente della traccia (null per il brano predefinito). */
+  id?: number;
   /** Nome visualizzato della traccia. */
   name: string;
   /** URL della sorgente audio (file locale, blob o remoto). */

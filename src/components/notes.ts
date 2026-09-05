@@ -1,16 +1,14 @@
-import { getStoredItem, setStoredItem } from '../utils/storage.js';
 import { getElement } from '../utils/dom.js';
 import { formatRelativeDate } from '../utils/formatters.js';
+import { loadNote, saveNote } from '../utils/database.js';
 
 /**
- * Gestione delle note con salvataggio in localStorage.
+ * Gestione delle note con salvataggio in SQLite.
  *
  * L'auto-save avviene dopo un breve periodo di inattività,
  * mentre il pulsante Salva fornisce un feedback immediato all'utente.
  */
 
-const NOTES_KEY = 'dashboard-notes';
-const TIMESTAMP_KEY = 'dashboard-notes-timestamp';
 const AUTO_SAVE_DELAY_MS = 1000;
 const FEEDBACK_DURATION_MS = 300;
 
@@ -24,39 +22,50 @@ function updateStatus(element: HTMLElement, timestamp: number | null): void {
 }
 
 export function initializeNotes(): void {
+  initializeNotesAsync().catch((error) => {
+    // eslint-disable-next-line no-console
+    console.error('Errore inizializzazione note:', error);
+  });
+}
+
+async function initializeNotesAsync(): Promise<void> {
   const textarea = getElement<HTMLTextAreaElement>('#notes-textarea');
   const saveButton = getElement<HTMLButtonElement>('#save-notes');
   const statusLabel = getElement<HTMLElement>('#notes-status');
 
-  const savedContent = getStoredItem(NOTES_KEY);
-  const savedTimestamp = getStoredItem(TIMESTAMP_KEY);
+  const savedNote = await loadNote();
 
-  if (savedContent) {
-    textarea.value = savedContent;
+  if (savedNote) {
+    textarea.value = savedNote.content;
+    updateStatus(statusLabel, savedNote.updatedAt);
+  } else {
+    updateStatus(statusLabel, null);
   }
-
-  updateStatus(statusLabel, savedTimestamp ? Number(savedTimestamp) : null);
 
   let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
 
-  function persistNotes(): void {
-    const now = Date.now();
-
-    if (setStoredItem(NOTES_KEY, textarea.value)) {
-      setStoredItem(TIMESTAMP_KEY, String(now));
-      updateStatus(statusLabel, now);
-    }
+  async function persistNotes(): Promise<void> {
+    const timestamp = await saveNote(textarea.value);
+    updateStatus(statusLabel, timestamp);
   }
 
   textarea.addEventListener('input', () => {
     if (autoSaveTimer) {
       clearTimeout(autoSaveTimer);
     }
-    autoSaveTimer = setTimeout(persistNotes, AUTO_SAVE_DELAY_MS);
+    autoSaveTimer = setTimeout(() => {
+      persistNotes().catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Errore auto-salvataggio note:', error);
+      });
+    }, AUTO_SAVE_DELAY_MS);
   });
 
   saveButton.addEventListener('click', () => {
-    persistNotes();
+    persistNotes().catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error('Errore salvataggio note:', error);
+    });
 
     // Feedback visivo temporaneo per confermare il salvataggio.
     saveButton.style.backgroundColor = 'var(--primary-light)';

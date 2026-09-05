@@ -1,5 +1,8 @@
 import { formatFileSize } from '../utils/formatters.js';
 import { getElement } from '../utils/dom.js';
+import { isRunningInTauri } from '../utils/environment.js';
+import { loadTracks, saveTrack, type TrackRecord } from '../utils/database.js';
+import { mkdir, writeFile, readFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 import type { Track } from '../types.js';
 
 /**
@@ -18,6 +21,12 @@ const DEFAULT_TRACK: Track = {
 
 const DEFAULT_SIZE_LABEL = '3.4 MB';
 const LOCAL_FILE_LABEL = 'File locale';
+const AUDIO_DIR = 'audio';
+
+function generateUniqueFilename(originalName: string): string {
+  const extension = originalName.split('.').pop() ?? 'audio';
+  return `${crypto.randomUUID()}.${extension}`;
+}
 
 type TrackSelectHandler = (track: Track, index: number) => void;
 
@@ -35,7 +44,41 @@ export class PlaylistManager {
   initialize(): void {
     this.renderEmptyState();
     this.addTrackToUi(this.tracks[0], 0);
+    this.loadPersistedTracks().catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error('Errore caricamento playlist persistita:', error);
+    });
     this.bindUpload();
+  }
+
+  private async loadPersistedTracks(): Promise<void> {
+    if (!isRunningInTauri()) return;
+
+    const records: TrackRecord[] = await loadTracks();
+    if (records.length === 0) return;
+
+    for (const record of records) {
+      try {
+        const bytes = await readFile(`${AUDIO_DIR}/${record.filename}`, {
+          baseDir: BaseDirectory.AppLocalData,
+        });
+        const blob = new Blob([bytes]);
+        const url = URL.createObjectURL(blob);
+
+        this.tracks.push({
+          id: record.id,
+          name: record.name,
+          url,
+          size: record.sizeLabel ?? undefined,
+          isDefault: false,
+        });
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Errore lettura traccia ${record.filename}:`, error);
+      }
+    }
+
+    this.renderTracks();
   }
 
   private bindUpload(): void {
@@ -48,20 +91,63 @@ export class PlaylistManager {
       files.forEach((file) => {
         if (!file.type.startsWith('audio/')) return;
 
-        const track: Track = {
-          name: file.name,
-          url: URL.createObjectURL(file),
-          size: formatFileSize(file.size),
-          isDefault: false,
-        };
-
-        this.tracks.push(track);
-        this.addTrackToUi(track, this.tracks.length - 1);
+        this.addTrack(file).catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Errore aggiunta traccia:', error);
+        });
       });
 
       // Reset per consentire il caricamento dello stesso file più volte.
       uploadInput.value = '';
     });
+  }
+
+  private async addTrack(file: File): Promise<void> {
+    const sizeLabel = formatFileSize(file.size);
+
+    if (isRunningInTauri()) {
+      await mkdir(AUDIO_DIR, { baseDir: BaseDirectory.AppLocalData, recursive: true });
+
+      const filename = generateUniqueFilename(file.name);
+      const arrayBuffer = await file.arrayBuffer();
+      await writeFile(`${AUDIO_DIR}/${filename}`, new Uint8Array(arrayBuffer), {
+        baseDir: BaseDirectory.AppLocalData,
+      });
+
+      const id = await saveTrack(filename, file.name, sizeLabel);
+      if (id === null) {
+        throw new Error('Salvataggio metadati traccia fallito');
+      }
+
+      const bytes = await readFile(`${AUDIO_DIR}/${filename}`, {
+        baseDir: BaseDirectory.AppLocalData,
+      });
+      const blob = new Blob([bytes]);
+      const url = URL.createObjectURL(blob);
+
+      this.tracks.push({
+        id,
+        name: file.name,
+        url,
+        size: sizeLabel,
+        isDefault: false,
+      });
+    } else {
+      this.tracks.push({
+        name: file.name,
+        url: URL.createObjectURL(file),
+        size: sizeLabel,
+        isDefault: false,
+      });
+    }
+
+    this.addTrackToUi(this.tracks[this.tracks.length - 1], this.tracks.length - 1);
+  }
+
+  private renderTracks(): void {
+    this.container.innerHTML = '';
+    this.renderEmptyState();
+    this.tracks.forEach((track, index) => this.addTrackToUi(track, index));
   }
 
   private removeEmptyState(): void {

@@ -8,6 +8,7 @@ import { PlaylistManager } from './components/playlist.js';
 import { initializeTabs } from './components/tabs.js';
 import { initializeNotes } from './components/notes.js';
 import { initializeQuickSearch } from './components/quickSearch.js';
+import { isRunningInTauri } from './utils/environment.js';
 
 /**
  * Punto di ingresso dell'applicazione.
@@ -17,6 +18,10 @@ import { initializeQuickSearch } from './components/quickSearch.js';
  * la riproduzione vera e propria al controller audio.
  */
 function initializeApp(): void {
+  if (isRunningInTauri()) {
+    document.documentElement.classList.add('is-tauri');
+  }
+
   initializeTheme();
   initializeClock();
 
