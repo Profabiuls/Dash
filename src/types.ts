@@ -16,6 +16,8 @@ export interface Track {
   size?: string;
   /** Indica se la traccia è il brano predefinito incluso nel progetto. */
   isDefault: boolean;
+  /** Nome del file su disco in AppLocalData (solo tracce persistite in Tauri). */
+  filename?: string;
 }
 
 export interface NotesState {

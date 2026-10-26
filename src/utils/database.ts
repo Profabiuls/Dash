@@ -2,7 +2,10 @@ import Database from '@tauri-apps/plugin-sql';
 
 const DB_PATH = 'sqlite:app.db';
 
-let databaseInstance: Database | null = null;
+// Si cachea la Promise e non l'istanza: due chiamate concorrenti durante
+// il primo caricamento condividerebbero altrimenti due connessioni e
+// doppie CREATE TABLE.
+let databasePromise: Promise<Database> | null = null;
 
 interface NoteRow {
   content: string;
@@ -18,8 +21,11 @@ interface TrackRow {
 }
 
 async function getDatabase(): Promise<Database> {
-  if (databaseInstance) return databaseInstance;
+  databasePromise ??= openDatabase();
+  return databasePromise;
+}
 
+async function openDatabase(): Promise<Database> {
   const db = await Database.load(DB_PATH);
   await db.execute(`
     CREATE TABLE IF NOT EXISTS notes (
@@ -37,8 +43,7 @@ async function getDatabase(): Promise<Database> {
       created_at INTEGER NOT NULL
     )
   `);
-  databaseInstance = db;
-  return databaseInstance;
+  return db;
 }
 
 export interface NoteRecord {
@@ -68,11 +73,10 @@ export async function saveNote(content: string): Promise<number | null> {
     const db = await getDatabase();
     const now = Date.now();
 
-    await db.execute('DELETE FROM notes');
-    await db.execute('INSERT INTO notes (id, content, updated_at) VALUES (1, ?, ?)', [
-      content,
-      now,
-    ]);
+    await db.execute(
+      'INSERT OR REPLACE INTO notes (id, content, updated_at) VALUES (1, ?, ?)',
+      [content, now]
+    );
 
     return now;
   } catch (error) {
@@ -120,17 +124,12 @@ export async function saveTrack(
     const db = await getDatabase();
     const now = Date.now();
 
-    await db.execute(
+    const result = await db.execute(
       'INSERT INTO tracks (filename, name, size_label, created_at) VALUES (?, ?, ?, ?)',
       [filename, name, sizeLabel, now]
     );
 
-    const rows = await db.select<Array<{ id: number }>>(
-      'SELECT id FROM tracks WHERE filename = ? ORDER BY created_at DESC LIMIT 1',
-      [filename]
-    );
-
-    return rows.length > 0 ? rows[0].id : null;
+    return result.lastInsertId ?? null;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Errore salvataggio traccia nel database:', error);

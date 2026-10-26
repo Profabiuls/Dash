@@ -6,7 +6,9 @@
  * protetta per non bloccare l'applicazione.
  */
 
-const isStorageAvailable = (): boolean => {
+// Il risultato del probe viene calcolato una sola volta: scrivere e rimuovere
+// una chiave di test a ogni accesso sarebbe lavoro inutile.
+const storageAvailable: boolean = (() => {
   try {
     const key = '__storage_test__';
     window.localStorage.setItem(key, key);
@@ -15,10 +17,10 @@ const isStorageAvailable = (): boolean => {
   } catch {
     return false;
   }
-};
+})();
 
 export function getStoredItem(key: string): string | null {
-  if (!isStorageAvailable()) return null;
+  if (!storageAvailable) return null;
 
   try {
     return window.localStorage.getItem(key);
@@ -28,7 +30,7 @@ export function getStoredItem(key: string): string | null {
 }
 
 export function setStoredItem(key: string, value: string): boolean {
-  if (!isStorageAvailable()) return false;
+  if (!storageAvailable) return false;
 
   try {
     window.localStorage.setItem(key, value);

@@ -1,42 +1,44 @@
 import { getElement } from '../utils/dom.js';
 
 /**
- * Orologio analogico aggiornato ogni secondo.
+ * Orologio analogico con lancette a movimento fluido.
  *
  * La rotazione viene calcolata in gradi a partire dall'ora corrente
  * e applicata tramite CSS transform, senza alterare il layout.
+ * L'aggiornamento avviene tramite requestAnimationFrame: un setInterval
+ * a 1 secondo renderebbe invisibile la componente in millisecondi.
  */
 
-const HOUR_DEGREES_PER_HOUR = 30; // 360deg / 12 ore
-const MINUTE_DEGREES_PER_MINUTE = 6; // 360deg / 60 minuti
-const SECOND_DEGREES_PER_SECOND = 6; // 360deg / 60 secondi
-const MS_PER_MINUTE = 60_000;
+const HOURS_PER_CLOCK_CYCLE = 12;
+const MINUTES_PER_HOUR = 60;
+const SECONDS_PER_MINUTE = 60;
+const MS_PER_SECOND = 1000;
+const FULL_CIRCLE_DEGREES = 360;
 
-function rotateHand(element: HTMLElement, degrees: number): void {
-  element.style.transform = `rotate(${degrees}deg)`;
+export interface ClockAngles {
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
-function updateClock(
-  hoursHand: HTMLElement,
-  minutesHand: HTMLElement,
-  secondsHand: HTMLElement
-): void {
-  const now = new Date();
-  const hours = now.getHours() % 12;
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
-  const milliseconds = now.getMilliseconds();
+/**
+ * Calcola gli angoli delle tre lancette per un dato istante.
+ *
+ * Funzione pura: l'estrazione dal DOM la rende testabile in isolamento.
+ */
+export function computeHandAngles(now: Date): ClockAngles {
+  const smoothSeconds =
+    now.getSeconds() + now.getMilliseconds() / MS_PER_SECOND;
+  const smoothMinutes =
+    now.getMinutes() + smoothSeconds / SECONDS_PER_MINUTE;
+  const smoothHours =
+    (now.getHours() % HOURS_PER_CLOCK_CYCLE) + smoothMinutes / MINUTES_PER_HOUR;
 
-  // Include i millisecondi per un movimento più fluido dei secondi.
-  const smoothSeconds = seconds + milliseconds / MS_PER_MINUTE;
-
-  const hoursDegrees = (hours + minutes / 60) * HOUR_DEGREES_PER_HOUR;
-  const minutesDegrees = (minutes + smoothSeconds / 60) * MINUTE_DEGREES_PER_MINUTE;
-  const secondsDegrees = smoothSeconds * SECOND_DEGREES_PER_SECOND;
-
-  rotateHand(hoursHand, hoursDegrees);
-  rotateHand(minutesHand, minutesDegrees);
-  rotateHand(secondsHand, secondsDegrees);
+  return {
+    hours: smoothHours * (FULL_CIRCLE_DEGREES / HOURS_PER_CLOCK_CYCLE),
+    minutes: smoothMinutes * (FULL_CIRCLE_DEGREES / MINUTES_PER_HOUR),
+    seconds: smoothSeconds * (FULL_CIRCLE_DEGREES / SECONDS_PER_MINUTE),
+  };
 }
 
 export function initializeClock(): void {
@@ -44,6 +46,13 @@ export function initializeClock(): void {
   const minutesHand = getElement<HTMLElement>('.clock .hand.minutes');
   const secondsHand = getElement<HTMLElement>('.clock .hand.seconds');
 
-  updateClock(hoursHand, minutesHand, secondsHand);
-  window.setInterval(() => updateClock(hoursHand, minutesHand, secondsHand), 1000);
+  const renderFrame = (): void => {
+    const angles = computeHandAngles(new Date());
+    hoursHand.style.transform = `rotate(${angles.hours}deg)`;
+    minutesHand.style.transform = `rotate(${angles.minutes}deg)`;
+    secondsHand.style.transform = `rotate(${angles.seconds}deg)`;
+    requestAnimationFrame(renderFrame);
+  };
+
+  renderFrame();
 }

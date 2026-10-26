@@ -1,8 +1,8 @@
 import { formatFileSize } from '../utils/formatters.js';
 import { getElement } from '../utils/dom.js';
 import { isRunningInTauri } from '../utils/environment.js';
-import { loadTracks, saveTrack, type TrackRecord } from '../utils/database.js';
-import { mkdir, writeFile, readFile, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { loadTracks, saveTrack, deleteTrack, type TrackRecord } from '../utils/database.js';
+import { mkdir, writeFile, readFile, remove, BaseDirectory } from '@tauri-apps/plugin-fs';
 import type { Track } from '../types.js';
 
 /**
@@ -22,6 +22,7 @@ const DEFAULT_TRACK: Track = {
 const DEFAULT_SIZE_LABEL = '3.4 MB';
 const LOCAL_FILE_LABEL = 'File locale';
 const AUDIO_DIR = 'audio';
+const FEEDBACK_DURATION_MS = 4000;
 
 function generateUniqueFilename(originalName: string): string {
   const extension = originalName.split('.').pop() ?? 'audio';
@@ -35,6 +36,7 @@ export class PlaylistManager {
   private currentTrackIndex = 0;
   private container: HTMLElement;
   private onSelectTrack: TrackSelectHandler;
+  private feedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(containerSelector: string, onSelectTrack: TrackSelectHandler) {
     this.container = getElement<HTMLElement>(containerSelector);
@@ -71,6 +73,7 @@ export class PlaylistManager {
           url,
           size: record.sizeLabel ?? undefined,
           isDefault: false,
+          filename: record.filename,
         });
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -89,17 +92,36 @@ export class PlaylistManager {
       if (files.length === 0) return;
 
       files.forEach((file) => {
-        if (!file.type.startsWith('audio/')) return;
+        if (!file.type.startsWith('audio/')) {
+          this.showFeedback(`"${file.name}" non è un file audio e non è stato aggiunto.`);
+          return;
+        }
 
         this.addTrack(file).catch((error) => {
           // eslint-disable-next-line no-console
           console.error('Errore aggiunta traccia:', error);
+          this.showFeedback(`Impossibile aggiungere "${file.name}".`);
         });
       });
 
       // Reset per consentire il caricamento dello stesso file più volte.
       uploadInput.value = '';
     });
+  }
+
+  private showFeedback(message: string): void {
+    this.container.parentElement
+      ?.querySelector('.playlist-feedback')
+      ?.remove();
+
+    const feedback = document.createElement('p');
+    feedback.className = 'playlist-feedback';
+    feedback.setAttribute('role', 'status');
+    feedback.textContent = message;
+    this.container.before(feedback);
+
+    if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
+    this.feedbackTimer = setTimeout(() => feedback.remove(), FEEDBACK_DURATION_MS);
   }
 
   private async addTrack(file: File): Promise<void> {
@@ -119,18 +141,13 @@ export class PlaylistManager {
         throw new Error('Salvataggio metadati traccia fallito');
       }
 
-      const bytes = await readFile(`${AUDIO_DIR}/${filename}`, {
-        baseDir: BaseDirectory.AppLocalData,
-      });
-      const blob = new Blob([bytes]);
-      const url = URL.createObjectURL(blob);
-
       this.tracks.push({
         id,
         name: file.name,
-        url,
+        url: URL.createObjectURL(file),
         size: sizeLabel,
         isDefault: false,
+        filename,
       });
     } else {
       this.tracks.push({
@@ -142,6 +159,43 @@ export class PlaylistManager {
     }
 
     this.addTrackToUi(this.tracks[this.tracks.length - 1], this.tracks.length - 1);
+  }
+
+  private async removeTrack(index: number): Promise<void> {
+    const track = this.tracks[index];
+    if (!track || track.isDefault) return;
+
+    if (isRunningInTauri()) {
+      if (track.id !== undefined) {
+        await deleteTrack(track.id);
+      }
+      if (track.filename) {
+        try {
+          await remove(`${AUDIO_DIR}/${track.filename}`, {
+            baseDir: BaseDirectory.AppLocalData,
+          });
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(`Errore eliminazione file ${track.filename}:`, error);
+        }
+      }
+    }
+
+    // Rilascia il blob URL per evitare memory leak.
+    URL.revokeObjectURL(track.url);
+    this.tracks.splice(index, 1);
+
+    if (index === this.currentTrackIndex) {
+      this.currentTrackIndex = 0;
+      this.renderTracks();
+      this.selectTrack(0);
+      return;
+    }
+
+    if (index < this.currentTrackIndex) {
+      this.currentTrackIndex -= 1;
+    }
+    this.renderTracks();
   }
 
   private renderTracks(): void {
@@ -214,18 +268,37 @@ export class PlaylistManager {
     item.appendChild(info);
     item.appendChild(playButton);
 
-    item.addEventListener('click', (event) => {
-      // Se si clicca sul pulsante play, evitiamo il doppio trigger.
-      event.stopPropagation();
-      this.selectTrack(index);
-    });
+    if (!track.isDefault) {
+      item.appendChild(this.createDeleteButton(track, index));
+    }
 
-    playButton.addEventListener('click', (event) => {
-      event.stopPropagation();
+    item.addEventListener('click', () => {
       this.selectTrack(index);
     });
 
     this.container.appendChild(item);
+  }
+
+  private createDeleteButton(track: Track, index: number): HTMLButtonElement {
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'track-delete';
+    deleteButton.setAttribute('aria-label', `Elimina ${track.name}`);
+    deleteButton.setAttribute('type', 'button');
+    const deleteIcon = document.createElement('ion-icon');
+    deleteIcon.setAttribute('name', 'trash-outline');
+    deleteIcon.setAttribute('aria-hidden', 'true');
+    deleteButton.appendChild(deleteIcon);
+
+    deleteButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      this.removeTrack(index).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Errore eliminazione traccia:', error);
+        this.showFeedback(`Impossibile eliminare "${track.name}".`);
+      });
+    });
+
+    return deleteButton;
   }
 
   selectTrack(index: number): void {

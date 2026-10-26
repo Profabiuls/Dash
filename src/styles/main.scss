@@ -819,6 +819,51 @@ button {
   }
 }
 
+.track-delete {
+  width: 3.6rem;
+  height: 3.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: $shadow;
+  color: var(--greyDark);
+  opacity: 0;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 1.8rem;
+  }
+
+  &:hover {
+    box-shadow: $inner-shadow;
+    transform: scale(0.95);
+    color: var(--primary-dark);
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary);
+    outline-offset: 0.2rem;
+  }
+}
+
+.playlist-item:hover .track-delete {
+  opacity: 1;
+}
+
+.playlist-feedback {
+  margin: 0 0 1rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 1rem;
+  font-size: 1.3rem;
+  color: var(--primary-dark);
+  background: var(--surface);
+  box-shadow: $inner-shadow;
+}
+
 // ---------------------------------------------------------------------------
 // Ricerca
 // ---------------------------------------------------------------------------

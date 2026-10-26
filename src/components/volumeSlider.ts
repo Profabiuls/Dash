@@ -1,5 +1,5 @@
 import { getElement } from '../utils/dom.js';
-import { AudioPlayerController } from './audioPlayer.js';
+import { AudioPlayerController, DEFAULT_VOLUME_PERCENTAGE } from './audioPlayer.js';
 
 /**
  * Slider del volume basato su <input type="range"> nativo.
@@ -13,7 +13,6 @@ import { AudioPlayerController } from './audioPlayer.js';
  * riducendo la complessita' e gli errori di implementazione ARIA.
  */
 
-const DEFAULT_VOLUME = 50;
 const PERCENTAGE_FACTOR = 100;
 
 function updateSliderFill(slider: HTMLInputElement, percentage: number): void {
@@ -40,8 +39,8 @@ export function initializeVolumeSlider(controller: AudioPlayerController): void 
   const valueLabel = getElement<HTMLElement>('#volume-value');
 
   // Inizializza il controller, lo slider e l'etichetta allo stesso valore.
-  slider.value = String(DEFAULT_VOLUME);
-  updateVolume(controller, DEFAULT_VOLUME, valueLabel, slider);
+  slider.value = String(DEFAULT_VOLUME_PERCENTAGE);
+  updateVolume(controller, DEFAULT_VOLUME_PERCENTAGE, valueLabel, slider);
 
   slider.addEventListener('input', () => {
     updateVolume(controller, Number(slider.value), valueLabel, slider);

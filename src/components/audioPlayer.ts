@@ -16,9 +16,12 @@ const WAVES_PAUSED_CLASS = 'paused';
 const VISIBILITY_CLASS = 'visibility';
 const SHADOW_CLASS = 'shadow';
 const VU_BAR_COUNT = 12;
-const DEFAULT_VOLUME = 0.5;
 const VOLUME_PERCENTAGE_FACTOR = 100;
 const VU_METER_BASE_FACTOR = 6.0;
+
+/** Volume iniziale condiviso con lo slider, espresso in percentuale 0-100. */
+export const DEFAULT_VOLUME_PERCENTAGE = 50;
+const DEFAULT_VOLUME = DEFAULT_VOLUME_PERCENTAGE / VOLUME_PERCENTAGE_FACTOR;
 
 export class AudioPlayerController {
   readonly audio: HTMLAudioElement;
@@ -156,9 +159,10 @@ export class AudioPlayerController {
   }
 
   private startVuMeter(): void {
-    if (!this.analyser || this.vuBars.length !== VU_BAR_COUNT) return;
+    const analyser = this.analyser;
+    if (!analyser || this.vuBars.length !== VU_BAR_COUNT) return;
 
-    const bufferLength = this.analyser.fftSize;
+    const bufferLength = analyser.fftSize;
     const samplesPerBar = Math.floor(bufferLength / VU_BAR_COUNT);
     const timeData = new Float32Array(bufferLength);
 
@@ -166,7 +170,7 @@ export class AudioPlayerController {
       // Usiamo i campioni nel dominio del tempo e calcoliamo il valore RMS
       // per ogni segmento, che e' molto piu' fedele al volume percepito rispetto
       // ai dati di frequenza grezzi.
-      this.analyser!.getFloatTimeDomainData(timeData);
+      analyser.getFloatTimeDomainData(timeData);
 
       const volumeFactor = VU_METER_BASE_FACTOR;
 
@@ -206,15 +210,12 @@ export class AudioPlayerController {
     this.wave1.classList.toggle(WAVES_PAUSED_CLASS, !playing);
     this.wave2.classList.toggle(WAVES_PAUSED_CLASS, !playing);
 
-    if (playing) {
-      this.playIcon.classList.add(VISIBILITY_CLASS);
-      this.pauseIcon.classList.add(VISIBILITY_CLASS);
-      this.playButton.classList.add(SHADOW_CLASS);
-    } else {
-      this.playIcon.classList.remove(VISIBILITY_CLASS);
-      this.pauseIcon.classList.remove(VISIBILITY_CLASS);
-      this.playButton.classList.remove(SHADOW_CLASS);
-    }
+    // La classe .visibility ha semantica invertita nel CSS:
+    // nasconde .play (opacity 1 -> 0) e mostra .pause (opacity 0 -> 1),
+    // quindi va applicata a entrambe le icone con lo stesso stato.
+    this.playIcon.classList.toggle(VISIBILITY_CLASS, playing);
+    this.pauseIcon.classList.toggle(VISIBILITY_CLASS, playing);
+    this.playButton.classList.toggle(SHADOW_CLASS, playing);
   }
 
   private notifyStateChange(): void {

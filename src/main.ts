@@ -1,5 +1,6 @@
 import './styles/main.scss';
 
+import { defineCustomElements } from 'ionicons/dist/loader/index.js';
 import { initializeTheme } from './components/theme.js';
 import { initializeClock } from './components/clock.js';
 import { AudioPlayerController } from './components/audioPlayer.js';
@@ -18,6 +19,10 @@ import { isRunningInTauri } from './utils/environment.js';
  * la riproduzione vera e propria al controller audio.
  */
 function initializeApp(): void {
+  // Registra i web component <ion-icon> dal bundle npm (niente CDN);
+  // resourcesUrl punta agli SVG serviti dal plugin Vite in vite.config.ts.
+  defineCustomElements(window, { resourcesUrl: '/ionicons/' });
+
   if (isRunningInTauri()) {
     document.documentElement.classList.add('is-tauri');
   }
